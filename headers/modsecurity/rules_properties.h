@@ -42,9 +42,13 @@
         to = (from == PropertyNotSetConfigBoolean) ? default : from;         \
     }
 
-#define merge_ruleengine_value(to, from, default)                            \
-    if (to == PropertyNotSetRuleEngine) {                                    \
-        to = (from == PropertyNotSetRuleEngine) ? default : from;            \
+#define merge_ruleengine_value(to, from, default)                                            \
+    if (to == PropertyNotSetRuleEngine or 1 == 1) {                                                    \
+        std::cout << " (a) ------------ to: " << ruleEngineStateString(to) << std::endl;     \
+        std::cout << "                from: " << ruleEngineStateString(from) << std::endl;   \
+        to = (from == PropertyNotSetRuleEngine) ? default : from;                            \
+        std::cout << " (a) ------------ to: " << ruleEngineStateString(to) << std::endl;     \
+        std::cout << "                from: " << ruleEngineStateString(from) << std::endl;   \
     }
 
 #define merge_bodylimitaction_value(to, from, default)                       \
@@ -356,13 +360,26 @@ class RulesProperties {
         std::ostringstream *err) {
         int amount_of_rules = 0;
 
+std::cout << "********************************************************" << std::endl;
+std::cout << "  Merging properties from: " << (void *)from << std::endl;
+std::cout << "                         : " << (void *)to << std::endl;
+std::cout << " State of the rule engine: " << ruleEngineStateString(from->m_secRuleEngine) << std::endl;
+std::cout << "                       to: " << ruleEngineStateString(to->m_secRuleEngine) << std::endl;
+
         amount_of_rules = appendRules(from->m_rules, to->m_rules, err);
         if (amount_of_rules < 0) {
             return amount_of_rules;
         }
 
+std::cout << "(after 0)" << std::endl;
+std::cout << " State of the rule engine: " << ruleEngineStateString(from->m_secRuleEngine) << std::endl;
+std::cout << "                       to: " << ruleEngineStateString(to->m_secRuleEngine) << std::endl;
+
         merge_ruleengine_value(to->m_secRuleEngine, from->m_secRuleEngine,
                                PropertyNotSetRuleEngine);
+std::cout << "(after 1)" << std::endl;
+std::cout << " State of the rule engine: " << ruleEngineStateString(from->m_secRuleEngine) << std::endl;
+std::cout << "                       to: " << ruleEngineStateString(to->m_secRuleEngine) << std::endl;
 
         merge_boolean_value(to->m_secRequestBodyAccess,
                             from->m_secRequestBodyAccess,
@@ -469,6 +486,11 @@ class RulesProperties {
                     from->m_debugLog->getDebugLogLevel());
             }
         }
+std::cout << "(after 2)" << std::endl;
+std::cout << " State of the rule engine: " << ruleEngineStateString(from->m_secRuleEngine) << std::endl;
+std::cout << "                       to: " << ruleEngineStateString(to->m_secRuleEngine) << std::endl;
+std::cout << "(done)" << std::endl;
+
 
         return amount_of_rules;
     }
